@@ -1,0 +1,8 @@
+# IDEA files
+.idea
+
+# Binireies
+bin
+
+# Test results
+results
