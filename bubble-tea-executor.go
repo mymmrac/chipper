@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/mymmrac/chipper/core"
@@ -18,6 +19,7 @@ type testContext struct {
 	duration time.Duration
 
 	progressBar progress.Model
+	spinner     spinner.Model
 }
 
 type bubbleTeaExecutor struct {
@@ -66,6 +68,7 @@ type testProgress float64
 
 type testEnd time.Duration
 
+//nolint:funlen,cyclop
 func (b bubbleTeaExecutor) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
@@ -97,13 +100,19 @@ func (b bubbleTeaExecutor) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}()
 
 	case testStart:
-		b.testsContext = append(b.testsContext, testContext{
+		tc := testContext{
 			name:     msg.name,
 			progress: -1,
 			duration: -1,
 
 			progressBar: progress.New(progress.WithDefaultGradient()),
-		})
+			spinner:     spinner.New(),
+		}
+		tc.spinner.Spinner = spinner.MiniDot
+
+		b.testsContext = append(b.testsContext, tc)
+
+		cmds = append(cmds, tc.spinner.Tick)
 
 	case testProgress:
 		index := len(b.testsContext) - 1
@@ -115,9 +124,21 @@ func (b bubbleTeaExecutor) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		b.testsContext[len(b.testsContext)-1].duration = time.Duration(msg)
 
 	case progress.FrameMsg:
+		var ok bool
 		for i, tc := range b.testsContext {
 			progressBarModel, cmd := tc.progressBar.Update(msg)
-			b.testsContext[i].progressBar, _ = progressBarModel.(progress.Model)
+			b.testsContext[i].progressBar, ok = progressBarModel.(progress.Model)
+			if !ok {
+				panic("Conversion to progress.Model failed")
+			}
+
+			cmds = append(cmds, cmd)
+		}
+
+	case spinner.TickMsg:
+		for i, tc := range b.testsContext {
+			spinnerModel, cmd := tc.spinner.Update(msg)
+			b.testsContext[i].spinner = spinnerModel
 			cmds = append(cmds, cmd)
 		}
 	}
@@ -133,7 +154,7 @@ func (b bubbleTeaExecutor) View() string {
 	data := strings.Builder{}
 
 	if b.testCount > 0 {
-		data.WriteString(fmt.Sprintf("Tests to execute: %d\n\n", b.testCount))
+		data.WriteString(fmt.Sprintf("Starting execution of %d tests...\n\n", b.testCount))
 	}
 
 	for i, tc := range b.testsContext {
@@ -141,16 +162,22 @@ func (b bubbleTeaExecutor) View() string {
 
 		if tc.progress >= 0 {
 			tc.progressBar.Width = b.w - 4
-			data.WriteString(" _ " + tc.progressBar.View() + "\n")
+			if tc.progress == 1 {
+				data.WriteString(" ✓ ")
+			} else {
+				data.WriteString(fmt.Sprintf(" %s ", tc.spinner.View()))
+			}
+
+			data.WriteString(tc.progressBar.View() + "\n")
 		}
 
 		if tc.duration > 0 {
-			data.WriteString(fmt.Sprintf("Done in: %s\n\n", tc.duration))
+			data.WriteString(fmt.Sprintf("Finished in %s\n\n", tc.duration))
 		}
 	}
 
 	if b.executionDuration > 0 {
-		data.WriteString(fmt.Sprintf("Tests done in: %s\n", b.executionDuration))
+		data.WriteString(fmt.Sprintf("All tests finished in %s\n", b.executionDuration))
 	}
 
 	if b.quit {
