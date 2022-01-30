@@ -5,9 +5,8 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
-	"strconv"
-	"time"
 
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	"github.com/mymmrac/chipper/core"
@@ -17,6 +16,14 @@ import (
 //go:embed config.yaml
 var configData []byte
 
+var rootCmd = &cobra.Command{
+	Use:     "chipper",
+	Short:   "Chipper is small tool for testing CPUs",
+	Args:    cobra.NoArgs,
+	Version: "v0.1.3",
+	Run:     run,
+}
+
 func main() {
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(bytes.NewBuffer(configData)); err != nil {
@@ -24,6 +31,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := rootCmd.Execute(); err != nil {
+		os.Exit(1)
+	}
+}
+
+func run(_ *cobra.Command, _ []string) {
 	var tcs tests.TestCases
 	if err := viper.UnmarshalKey("test-case-list", &tcs); err != nil {
 		fmt.Printf("Failed to get test cases: %v\n", err)
@@ -48,35 +61,4 @@ func main() {
 	}
 
 	core.ExecuteTests(testList, progressReadInterval, &simpleTerminalExecutor{})
-}
-
-type simpleTerminalExecutor struct {
-	testCount   int
-	currentTest string
-}
-
-func (s *simpleTerminalExecutor) OnExecutionStart(count int) {
-	fmt.Printf("Tests to be executed: %d\n\n", count)
-	s.testCount = count
-}
-
-func (s *simpleTerminalExecutor) OnExecutionEnd(duration time.Duration) {
-	fmt.Printf("All tests done in %s\n", duration)
-}
-
-func (s *simpleTerminalExecutor) OnTestStart(name string, index int) {
-	fmt.Printf("[%d/%d] Starting test %s\n", index+1, s.testCount, name)
-	s.currentTest = name
-}
-
-func (s *simpleTerminalExecutor) OnTestProgress(progress float64) {
-	if progress != 0 {
-		fmt.Print("\033[1A\r\033[K")
-	}
-	fmt.Printf("Progress: %s%%\n", strconv.FormatFloat(progress*100, 'f', 2, 64))
-}
-
-func (s *simpleTerminalExecutor) OnTestEnd(duration time.Duration) {
-	fmt.Printf("Test %s done in %s\n", s.currentTest, duration)
-	fmt.Println()
 }
