@@ -3,21 +3,16 @@ package main
 import (
 	"fmt"
 	"math"
-	"strconv"
 )
 
 type trigonometryTest struct {
-	n uint
-	p uint
-
-	w      testResultWriter
+	n      uint
+	p      uint
 	isDone bool
 }
 
 func newTrigonometryTest(n uint) *trigonometryTest {
-	t := &trigonometryTest{n: n}
-	t.w = newTestResultWriter(t.name())
-	return t
+	return &trigonometryTest{n: n}
 }
 
 func (t *trigonometryTest) start() {
@@ -25,9 +20,6 @@ func (t *trigonometryTest) start() {
 	for t.p = 0; t.p < t.n; t.p++ {
 		a = math.Atan(math.Tan(a + math.E))
 	}
-
-	t.w.save(strconv.FormatFloat(a, 'f', -1, 64))
-	t.w.done()
 
 	t.isDone = true
 }

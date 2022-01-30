@@ -1,10 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -18,37 +15,7 @@ type test interface {
 
 const progressReadTimeout = time.Second
 
-type testResultWriter struct {
-	file *os.File
-}
-
-const testResultsDir = "./results"
-
-func newTestResultWriter(name string) testResultWriter {
-	file, err := os.OpenFile(filepath.Join(testResultsDir, name+".txt"), os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0777)
-	if err != nil {
-		panic(err)
-	}
-
-	return testResultWriter{file: file}
-}
-
-func (w testResultWriter) save(result string) {
-	_, err := w.file.WriteString(result + "\n")
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (w testResultWriter) done() {
-	_ = w.file.Close()
-}
-
 func main() {
-	if err := os.Mkdir(testResultsDir, 0777); err != nil && !errors.Is(err, os.ErrExist) {
-		panic(err)
-	}
-
 	tests := []test{
 		newFibonacciTest(10e4),
 		newFactorialTest(10e3),

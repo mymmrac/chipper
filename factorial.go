@@ -6,17 +6,13 @@ import (
 )
 
 type factorialTest struct {
-	n uint
-	p uint
-
-	w      testResultWriter
+	n      uint
+	p      uint
 	isDone bool
 }
 
 func newFactorialTest(n uint) *factorialTest {
-	f := &factorialTest{n: n}
-	f.w = newTestResultWriter(f.name())
-	return f
+	return &factorialTest{n: n}
 }
 
 func (f *factorialTest) start() {
@@ -24,9 +20,6 @@ func (f *factorialTest) start() {
 	for f.p = 1; f.p <= f.n; f.p++ {
 		a.Mul(a, big.NewInt(int64(f.p)))
 	}
-
-	f.w.save(a.String())
-	f.w.done()
 
 	f.isDone = true
 }

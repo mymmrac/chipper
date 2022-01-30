@@ -6,17 +6,13 @@ import (
 )
 
 type fibonacciTest struct {
-	n uint
-	p uint
-
-	w      testResultWriter
+	n      uint
+	p      uint
 	isDone bool
 }
 
 func newFibonacciTest(n uint) *fibonacciTest {
-	f := &fibonacciTest{n: n}
-	f.w = newTestResultWriter(f.name())
-	return f
+	return &fibonacciTest{n: n}
 }
 
 func (f *fibonacciTest) start() {
@@ -27,9 +23,6 @@ func (f *fibonacciTest) start() {
 		tmp := &big.Int{}
 		a, b = b, tmp.Add(a, b)
 	}
-
-	f.w.save(a.String())
-	f.w.done()
 
 	f.isDone = true
 }
