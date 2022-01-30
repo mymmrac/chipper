@@ -1,6 +1,6 @@
 # Chipper
 
-[![CI Status](https://github.com/mymmrac/chipper/actions/workflows/ci.yml/badge.svg)](https://github.com/mymmrac/chipper/actions/workflows/ci.yml)
+[![CI Status](https://github.com/mymmrac/chipper/actions/workflows/ci.yaml/badge.svg)](https://github.com/mymmrac/chipper/actions/workflows/ci.yaml)
 
 Chipper is a small tool for testing CPUs.
 
