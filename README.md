@@ -1,6 +1,14 @@
-# Chipper
+<p align="center">
+  <img src="docs/chipper.png" alt="Chipper logo" width="512px" style="border-radius: 12px;">
+</p>
 
-[![CI Status](https://github.com/mymmrac/chipper/actions/workflows/ci.yaml/badge.svg)](https://github.com/mymmrac/chipper/actions/workflows/ci.yaml)
+<p align="center">
+    <a href="https://github.com/mymmrac/chipper/actions/workflows/ci.yaml">
+        <img src="https://github.com/mymmrac/chipper/actions/workflows/ci.yaml/badge.svg" alt="Chipper CI">
+    </a>
+</p>
+
+# Chipper
 
 Chipper is a small tool for testing CPUs.
 
