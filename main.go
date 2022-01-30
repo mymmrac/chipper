@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/mymmrac/chipper/core"
 	"github.com/mymmrac/chipper/tests"
 )
 
@@ -45,39 +46,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	startTime := time.Now()
-
-	for _, t := range testList {
-		fmt.Printf("Starting test %s\n", t.Name())
-		testProgressTime := time.Now()
-		testStartTime := time.Now()
-
-		go t.Start()
-
-		firstTime := true
-		for !t.Done() {
-			if time.Since(testProgressTime) > progressReadTimeout {
-				testProgressTime = time.Now()
-				progress := t.Progress()
-
-				if firstTime {
-					firstTime = false
-				} else {
-					fmt.Print("\033[1A\r\033[K")
-				}
-
-				fmt.Printf("Progress: %s%%\n", strconv.FormatFloat(progress*100, 'f', 2, 64))
+	totalDuration := core.ExecuteTests(testList, progressReadTimeout,
+		func(testName string) {
+			fmt.Printf("Starting test %s\n", testName)
+		},
+		func(progress float64) {
+			if progress != 0 {
+				fmt.Print("\033[1A\r\033[K")
 			}
-		}
+			fmt.Printf("Progress: %s%%\n", strconv.FormatFloat(progress*100, 'f', 2, 64))
+		},
+		func(testName string, testDuration time.Duration) {
+			fmt.Printf("Test %s done in %s\n", testName, testDuration)
+			fmt.Println()
+		})
 
-		if !firstTime {
-			fmt.Print("\033[1A\r\033[K")
-		}
-
-		fmt.Printf("Progress: %s%%\n", strconv.FormatFloat(100, 'f', 2, 64))
-		fmt.Printf("Test %s done in %s\n", t.Name(), time.Since(testStartTime))
-		fmt.Println()
-	}
-
-	fmt.Printf("All tests done in %s\n", time.Since(startTime))
+	fmt.Printf("All tests done in %s\n", totalDuration)
 }
