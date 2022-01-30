@@ -26,18 +26,18 @@ type Test interface {
 type Tests []Test
 
 // TestStartCallback called before test is started
-type TestStartCallback func(testName string)
+type TestStartCallback func(name string)
 
 // TestProgressCallback called every time progress updates
 type TestProgressCallback func(progress float64)
 
 // TestEndCallback called after test is ended
-type TestEndCallback func(testName string, testDuration time.Duration)
+type TestEndCallback func(name string, duration time.Duration)
 
 // ExecuteTests executes all test and calls callbacks
 func ExecuteTests(tests Tests, progressReadTimeout time.Duration, startCallback TestStartCallback,
 	progressCallback TestProgressCallback, endCallback TestEndCallback) time.Duration {
-	startTime := time.Now()
+	executionStartTime := time.Now()
 
 	for _, t := range tests {
 		startCallback(t.Name())
@@ -60,5 +60,5 @@ func ExecuteTests(tests Tests, progressReadTimeout time.Duration, startCallback 
 		endCallback(t.Name(), time.Since(testStartTime))
 	}
 
-	return time.Since(startTime)
+	return time.Since(executionStartTime)
 }

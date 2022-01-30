@@ -49,8 +49,8 @@ func main() {
 	fmt.Printf("Tests to be executed: %d\n\n", len(testList))
 
 	totalDuration := core.ExecuteTests(testList, progressReadTimeout,
-		func(testName string) {
-			fmt.Printf("Starting test %s\n", testName)
+		func(name string) {
+			fmt.Printf("Starting test %s\n", name)
 		},
 		func(progress float64) {
 			if progress != 0 {
@@ -58,8 +58,8 @@ func main() {
 			}
 			fmt.Printf("Progress: %s%%\n", strconv.FormatFloat(progress*100, 'f', 2, 64))
 		},
-		func(testName string, testDuration time.Duration) {
-			fmt.Printf("Test %s done in %s\n", testName, testDuration)
+		func(name string, duration time.Duration) {
+			fmt.Printf("Test %s done in %s\n", name, duration)
 			fmt.Println()
 		})
 
