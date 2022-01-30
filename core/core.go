@@ -17,3 +17,6 @@ type Test interface {
 	// Progress returns current progress of test execution in range [0,1]
 	Progress() float64
 }
+
+// Tests represents slice of tests
+type Tests []Test

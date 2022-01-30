@@ -2,33 +2,52 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"time"
 
-	"github.com/mymmrac/chipper/core"
 	"github.com/mymmrac/chipper/tests"
 )
 
 const progressReadTimeout = time.Second
 
+var testCaseList = tests.TestCases{
+	{
+		Name: tests.Fibonacci,
+		Args: tests.TestCaseArgs{uint(10e4)},
+	},
+	{
+		Name: tests.Factorial,
+		Args: tests.TestCaseArgs{uint(10e3)},
+	},
+	{
+		Name: tests.Trigonometry,
+		Args: tests.TestCaseArgs{uint(10e5)},
+	},
+	{
+		Name: tests.Fibonacci,
+		Args: tests.TestCaseArgs{uint(10e5)},
+	},
+	{
+		Name: tests.Factorial,
+		Args: tests.TestCaseArgs{uint(10e4 * 2)},
+	},
+	{
+		Name: tests.Trigonometry,
+		Args: tests.TestCaseArgs{uint(10e7)},
+	},
+}
+
 func main() {
-	testsFast := []core.Test{
-		tests.NewFibonacciTest(10e4),
-		tests.NewFactorialTest(10e3),
-		tests.NewTrigonometryTest(10e5),
+	testList, err := tests.ParseTestCases(testCaseList)
+	if err != nil {
+		fmt.Printf("Test cases: %v\n", err)
+		os.Exit(1)
 	}
-
-	testsSlow := []core.Test{
-		tests.NewFibonacciTest(10e5),
-		tests.NewFactorialTest(10e4 * 2),
-		tests.NewTrigonometryTest(10e7),
-	}
-
-	testsAll := append(testsFast, testsSlow...)
 
 	startTime := time.Now()
 
-	for _, t := range testsAll {
+	for _, t := range testList {
 		fmt.Printf("Starting test %s\n", t.Name())
 		testProgressTime := time.Now()
 		testStartTime := time.Now()

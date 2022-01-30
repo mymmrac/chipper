@@ -19,7 +19,7 @@ func NewFibonacciTest(n uint) core.Test {
 }
 
 func (f *fibonacciTest) Name() string {
-	return fmt.Sprintf("fibonnacci-%d", f.n)
+	return fmt.Sprintf("fibonacci-%d", f.n)
 }
 
 func (f *fibonacciTest) Start() {
