@@ -31,7 +31,7 @@ chipper
 Build binary
 
 ```shell
-go build -o bin/chipper chipper
+go build -o bin/chipper github.com/mymmrac/chipper
 ```
 
 Run tests
