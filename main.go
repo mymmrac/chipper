@@ -51,9 +51,7 @@ func main() {
 			}
 		}
 
-		if firstTime {
-			firstTime = false
-		} else {
+		if !firstTime {
 			fmt.Print("\033[1A\r\033[K")
 		}
 

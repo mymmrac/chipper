@@ -25,6 +25,7 @@ linters:
     - varnamelen # checks that the length of a variable's name matches its scope
     - wrapcheck # Checks that errors returned from external packages are wrapped
     - wsl # Whitespace Linter - Forces you to use empty lines!
+    - gomnd # An analyzer to detect magic numbers.
 
     # To see a list of enabled/disabled by current configuration linters:
     # golangci-lint linters
@@ -79,17 +80,6 @@ linters-settings:
   gocognit: # Computes and checks the cognitive complexity of functions
     # Minimal code complexity to report, 30 by default (but we recommend 10-20)
     min-complexity: 20
-  gomnd: # An analyzer to detect magic numbers.
-    settings:
-      mnd:
-        # The list of enabled checks, see https://github.com/tommy-muehle/go-mnd/#checks for description.
-        checks:
-          - argument
-          - assign
-          - case
-          - condition
-          - operation
-          - return
   lll: # Reports long lines
     # Max line length, lines longer will be reported. Default is 120.
     # '\t' is counted as 1 character by default, and can be changed with the tab-width option
