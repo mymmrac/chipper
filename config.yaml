@@ -1,0 +1,20 @@
+progress-read-interval: 1s
+test-case-list:
+  - name: fibonacci
+    args:
+      - 100000
+  - name: factorial
+    args:
+      - 10000
+  - name: trigonometry
+    args:
+      - 1000000
+  - name: fibonacci
+    args:
+      - 1000000
+  - name: factorial
+    args:
+      - 200000
+  - name: trigonometry
+    args:
+      - 100000000

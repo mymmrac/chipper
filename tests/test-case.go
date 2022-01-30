@@ -29,8 +29,8 @@ type TestCaseArgs []interface{}
 
 // TestCase represents test with it's args
 type TestCase struct {
-	Name testName
-	Args TestCaseArgs
+	Name testName     `yaml:"name"`
+	Args TestCaseArgs `yaml:"args"`
 }
 
 // TestCases represents slice of test cases
@@ -41,9 +41,14 @@ func expectOneUint(args TestCaseArgs) (uint, error) {
 		return 0, errInvalidArgsCount
 	}
 
-	a, ok := args[0].(uint)
-	if !ok {
-		return 0, errInvalidArgType
+	a, okUint := args[0].(uint)
+	if !okUint {
+		b, okInt := args[0].(int)
+		if !okInt {
+			return 0, errInvalidArgType
+		}
+
+		a = uint(b)
 	}
 
 	return a, nil

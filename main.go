@@ -6,47 +6,45 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/spf13/viper"
+
 	"github.com/mymmrac/chipper/core"
 	"github.com/mymmrac/chipper/tests"
 )
 
-const progressReadTimeout = time.Second
-
-var testCaseList = tests.TestCases{
-	{
-		Name: tests.Fibonacci,
-		Args: tests.TestCaseArgs{uint(10e4)},
-	},
-	{
-		Name: tests.Factorial,
-		Args: tests.TestCaseArgs{uint(10e3)},
-	},
-	{
-		Name: tests.Trigonometry,
-		Args: tests.TestCaseArgs{uint(10e5)},
-	},
-	{
-		Name: tests.Fibonacci,
-		Args: tests.TestCaseArgs{uint(10e5)},
-	},
-	{
-		Name: tests.Factorial,
-		Args: tests.TestCaseArgs{uint(10e4 * 2)},
-	},
-	{
-		Name: tests.Trigonometry,
-		Args: tests.TestCaseArgs{uint(10e7)},
-	},
-}
-
 func main() {
-	testList, err := tests.ParseTestCases(testCaseList)
-	if err != nil {
-		fmt.Printf("Test cases: %v\n", err)
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Printf("Failed to read config: %v\n", err)
 		os.Exit(1)
 	}
 
-	core.ExecuteTests(testList, progressReadTimeout, &simpleTerminalExecutor{})
+	var tcs tests.TestCases
+	if err := viper.UnmarshalKey("test-case-list", &tcs); err != nil {
+		fmt.Printf("Failed to get test cases: %v\n", err)
+		os.Exit(1)
+	}
+
+	testList, err := tests.ParseTestCases(tcs)
+	if err != nil {
+		fmt.Printf("Failed to parce test cases: %v\n", err)
+		os.Exit(1)
+	}
+
+	if len(testList) == 0 {
+		fmt.Println("No test cases found")
+		os.Exit(1)
+	}
+
+	progressReadInterval := viper.GetDuration("progress-read-interval")
+	if progressReadInterval == 0 {
+		fmt.Println("Progress read interval can't be 0")
+		os.Exit(1)
+	}
+
+	core.ExecuteTests(testList, progressReadInterval, &simpleTerminalExecutor{})
 }
 
 type simpleTerminalExecutor struct {
