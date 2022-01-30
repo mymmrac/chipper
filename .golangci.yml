@@ -112,6 +112,10 @@ linters-settings:
     # Presence of "default" case in switch statements satisfies exhaustiveness,
     # even if all enum members are not listed
     default-signifies-exhaustive: true
+  gocritic: # Provides diagnostics that check for bugs, performance and style issues.
+    # Which checks should be disabled; can't be combined with 'enabled-checks'.
+    disabled-checks:
+      - appendAssign
 
 issues:
   # Excluding configuration per-path, per-linter, per-text and per-source

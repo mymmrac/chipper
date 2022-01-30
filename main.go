@@ -4,42 +4,42 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-)
 
-type test interface {
-	start()
-	done() bool
-	progress() float64
-	name() string
-}
+	"github.com/mymmrac/chipper/core"
+	"github.com/mymmrac/chipper/tests"
+)
 
 const progressReadTimeout = time.Second
 
 func main() {
-	tests := []test{
-		newFibonacciTest(10e4),
-		newFactorialTest(10e3),
-		newTrigonometryTest(10e5),
-
-		newFibonacciTest(10e5),
-		newFactorialTest(10e4 * 2),
-		newTrigonometryTest(10e7),
+	testsFast := []core.Test{
+		tests.NewFibonacciTest(10e4),
+		tests.NewFactorialTest(10e3),
+		tests.NewTrigonometryTest(10e5),
 	}
+
+	testsSlow := []core.Test{
+		tests.NewFibonacciTest(10e5),
+		tests.NewFactorialTest(10e4 * 2),
+		tests.NewTrigonometryTest(10e7),
+	}
+
+	testsAll := append(testsFast, testsSlow...)
 
 	startTime := time.Now()
 
-	for _, t := range tests {
-		fmt.Printf("Starting test %s\n", t.name())
+	for _, t := range testsAll {
+		fmt.Printf("Starting test %s\n", t.Name())
 		testProgressTime := time.Now()
 		testStartTime := time.Now()
 
-		go t.start()
+		go t.Start()
 
 		firstTime := true
-		for !t.done() {
+		for !t.Done() {
 			if time.Since(testProgressTime) > progressReadTimeout {
 				testProgressTime = time.Now()
-				progress := t.progress()
+				progress := t.Progress()
 
 				if firstTime {
 					firstTime = false
@@ -56,7 +56,7 @@ func main() {
 		}
 
 		fmt.Printf("Progress: %s%%\n", strconv.FormatFloat(100, 'f', 2, 64))
-		fmt.Printf("Test %s done in %s\n", t.name(), time.Since(testStartTime))
+		fmt.Printf("Test %s done in %s\n", t.Name(), time.Since(testStartTime))
 		fmt.Println()
 	}
 
