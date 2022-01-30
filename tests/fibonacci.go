@@ -1,25 +1,22 @@
 package tests
 
 import (
-	"fmt"
 	"math/big"
 
 	"github.com/mymmrac/chipper/core"
 )
 
 type fibonacciTest struct {
-	n      uint
-	p      uint
-	isDone bool
+	baseStepTest
 }
 
 // NewFibonacciTest creates new fibonacci test
 func NewFibonacciTest(n uint) core.Test {
-	return &fibonacciTest{n: n}
+	return &fibonacciTest{baseStepTest{n: n}}
 }
 
 func (f *fibonacciTest) Name() string {
-	return fmt.Sprintf("fibonacci-%d", f.n)
+	return f.nameBase(Fibonacci)
 }
 
 func (f *fibonacciTest) Start() {
@@ -32,12 +29,4 @@ func (f *fibonacciTest) Start() {
 	}
 
 	f.isDone = true
-}
-
-func (f *fibonacciTest) Done() bool {
-	return f.isDone
-}
-
-func (f *fibonacciTest) Progress() float64 {
-	return float64(f.p) / float64(f.n)
 }

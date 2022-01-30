@@ -1,25 +1,22 @@
 package tests
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/mymmrac/chipper/core"
 )
 
 type trigonometryTest struct {
-	n      uint
-	p      uint
-	isDone bool
+	baseStepTest
 }
 
 // NewTrigonometryTest creates new trigonometry test
 func NewTrigonometryTest(n uint) core.Test {
-	return &trigonometryTest{n: n}
+	return &trigonometryTest{baseStepTest{n: n}}
 }
 
 func (t *trigonometryTest) Name() string {
-	return fmt.Sprintf("trigonometry-%d", t.n)
+	return t.nameBase(Trigonometry)
 }
 
 func (t *trigonometryTest) Start() {
@@ -29,12 +26,4 @@ func (t *trigonometryTest) Start() {
 	}
 
 	t.isDone = true
-}
-
-func (t *trigonometryTest) Done() bool {
-	return t.isDone
-}
-
-func (t *trigonometryTest) Progress() float64 {
-	return float64(t.p) / float64(t.n)
 }

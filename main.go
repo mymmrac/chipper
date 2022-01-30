@@ -46,6 +46,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	fmt.Printf("Tests to be executed: %d\n\n", len(testList))
+
 	totalDuration := core.ExecuteTests(testList, progressReadTimeout,
 		func(testName string) {
 			fmt.Printf("Starting test %s\n", testName)
