@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -28,6 +29,12 @@ func main() {
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(bytes.NewBuffer(configData)); err != nil {
 		fmt.Printf("Failed to read config: %v\n", err)
+		os.Exit(1)
+	}
+
+	rootCmd.Flags().BoolP("simple-mode", "s", false, "Enable simple mode")
+	if err := viper.BindPFlag("simple-mode", rootCmd.Flags().Lookup("simple-mode")); err != nil {
+		fmt.Printf("Failed to bind flag: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -60,5 +67,16 @@ func run(_ *cobra.Command, _ []string) {
 		os.Exit(1)
 	}
 
-	core.ExecuteTests(testList, progressReadInterval, &simpleTerminalExecutor{})
+	if viper.GetBool("simple-mode") {
+		core.ExecuteTests(testList, progressReadInterval, &simpleTerminalExecutor{})
+	} else {
+		bubbleExecutor := newBubbleTeaExecutor(testList, progressReadInterval)
+		program := tea.NewProgram(bubbleExecutor)
+		bubbleExecutor.setProgram(program)
+
+		if err = program.Start(); err != nil {
+			fmt.Printf("Failed to start bubble tea: %v", err)
+			os.Exit(1)
+		}
+	}
 }
