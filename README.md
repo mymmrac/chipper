@@ -10,18 +10,32 @@ Chipper is a small tool for testing CPUs.
 - Factorial (`1, 2, 6, 24, 120`)
 - Trigonometry (`atan(tan(atan(... + e)))`)
 
-## Run
+## Install & Run
 
-Build binary:
+Install using `go install`
+
+```shell
+go install github.com/mymmrac/chipper@latest
+```
+
+Run
+
+```shell
+chipper
+```
+
+> Note: Make sure to add `$GOPATH/bin` to `$PATH`
+
+## Build & Run
+
+Build binary
 
 ```shell
 go build -o bin/chipper chipper
 ```
 
-Run test:
+Run tests
 
 ```shell
 ./bin/chipper
 ```
-
-Results of tests will be located in `results` folder.
