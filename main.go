@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	_ "embed"
 	"fmt"
 	"os"
 	"strconv"
@@ -12,11 +14,12 @@ import (
 	"github.com/mymmrac/chipper/tests"
 )
 
+//go:embed config.yaml
+var configData []byte
+
 func main() {
-	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	if err := viper.ReadInConfig(); err != nil {
+	if err := viper.ReadConfig(bytes.NewBuffer(configData)); err != nil {
 		fmt.Printf("Failed to read config: %v\n", err)
 		os.Exit(1)
 	}
