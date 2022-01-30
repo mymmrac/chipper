@@ -21,7 +21,7 @@ var rootCmd = &cobra.Command{
 	Use:     "chipper",
 	Short:   "Chipper is small tool for testing CPUs",
 	Args:    cobra.NoArgs,
-	Version: "v0.1.3",
+	Version: "v0.1.4",
 	Run:     run,
 }
 
