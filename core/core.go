@@ -25,40 +25,50 @@ type Test interface {
 // Tests represents slice of tests
 type Tests []Test
 
-// TestStartCallback called before test is started
-type TestStartCallback func(name string)
+// TestExecutor represents handler of test execution
+type TestExecutor interface {
+	// OnExecutionStart called before execution is started
+	OnExecutionStart(count int)
 
-// TestProgressCallback called every time progress updates
-type TestProgressCallback func(progress float64)
+	// OnExecutionEnd called after execution is ended
+	OnExecutionEnd(duration time.Duration)
 
-// TestEndCallback called after test is ended
-type TestEndCallback func(name string, duration time.Duration)
+	// OnTestStart called before test is started
+	OnTestStart(name string, index int)
+
+	// OnTestProgress called every time progress updates
+	OnTestProgress(progress float64)
+
+	// OnTestEnd called after test is ended
+	OnTestEnd(duration time.Duration)
+}
 
 // ExecuteTests executes all test and calls callbacks
-func ExecuteTests(tests Tests, progressReadTimeout time.Duration, startCallback TestStartCallback,
-	progressCallback TestProgressCallback, endCallback TestEndCallback) time.Duration {
+func ExecuteTests(tests Tests, progressReadInterval time.Duration, executor TestExecutor) {
+	executor.OnExecutionStart(len(tests))
 	executionStartTime := time.Now()
 
-	for _, t := range tests {
-		startCallback(t.Name())
+	for i, t := range tests {
+		executor.OnTestStart(t.Name(), i)
 		testStartTime := time.Now()
 		testProgressTime := time.Now()
 
 		go t.Start()
 
-		progressCallback(0)
+		executor.OnTestProgress(0)
 
 		for !t.Done() {
-			if time.Since(testProgressTime) > progressReadTimeout {
+			if time.Since(testProgressTime) > progressReadInterval {
 				testProgressTime = time.Now()
 				progress := t.Progress()
-				progressCallback(progress)
+
+				executor.OnTestProgress(progress)
 			}
 		}
 
-		progressCallback(1)
-		endCallback(t.Name(), time.Since(testStartTime))
+		executor.OnTestProgress(1)
+		executor.OnTestEnd(time.Since(testStartTime))
 	}
 
-	return time.Since(executionStartTime)
+	executor.OnExecutionEnd(time.Since(executionStartTime))
 }
