@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/mymmrac/chipper/core"
@@ -15,6 +16,8 @@ type testContext struct {
 	name     string
 	progress float64
 	duration time.Duration
+
+	progressBar progress.Model
 }
 
 type bubbleTeaExecutor struct {
@@ -64,6 +67,8 @@ type testProgress float64
 type testEnd time.Duration
 
 func (b bubbleTeaExecutor) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmds []tea.Cmd
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if key.Matches(msg, key.NewBinding(key.WithKeys("ctrl+c", "q", "esc"))) {
@@ -86,21 +91,38 @@ func (b bubbleTeaExecutor) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case executionEnd:
 		b.executionDuration = time.Duration(msg)
-		return b, tea.Quit
+		go func() {
+			<-time.After(time.Second)
+			b.program.Send(tea.Quit())
+		}()
 
 	case testStart:
 		b.testsContext = append(b.testsContext, testContext{
 			name:     msg.name,
 			progress: -1,
 			duration: -1,
+
+			progressBar: progress.New(progress.WithDefaultGradient()),
 		})
+
 	case testProgress:
-		b.testsContext[len(b.testsContext)-1].progress = float64(msg)
+		index := len(b.testsContext) - 1
+		b.testsContext[index].progress = float64(msg)
+		cmd := b.testsContext[index].progressBar.SetPercent(float64(msg))
+		cmds = append(cmds, cmd)
+
 	case testEnd:
 		b.testsContext[len(b.testsContext)-1].duration = time.Duration(msg)
+
+	case progress.FrameMsg:
+		for i, tc := range b.testsContext {
+			progressBarModel, cmd := tc.progressBar.Update(msg)
+			b.testsContext[i].progressBar, _ = progressBarModel.(progress.Model)
+			cmds = append(cmds, cmd)
+		}
 	}
 
-	return b, nil
+	return b, tea.Batch(cmds...)
 }
 
 func (b bubbleTeaExecutor) View() string {
@@ -118,7 +140,8 @@ func (b bubbleTeaExecutor) View() string {
 		data.WriteString(fmt.Sprintf("[%d/%d] %s\n", i+1, b.testCount, tc.name))
 
 		if tc.progress >= 0 {
-			data.WriteString(fmt.Sprintf("Progress: %f\n", tc.progress))
+			tc.progressBar.Width = b.w - 4
+			data.WriteString(" _ " + tc.progressBar.View() + "\n")
 		}
 
 		if tc.duration > 0 {
