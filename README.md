@@ -1,17 +1,7 @@
-<p align="center">
-  <img src="docs/chipper.png" alt="Chipper logo" width="512px" style="border-radius: 12px;">
-</p>
-
-<p align="center">
-    <a href="https://github.com/mymmrac/chipper/actions/workflows/ci.yaml">
-        <img src="https://github.com/mymmrac/chipper/actions/workflows/ci.yaml/badge.svg" alt="Chipper CI">
-    </a>
-    <a href="https://goreportcard.com/report/github.com/mymmrac/chipper">
-        <img src="https://goreportcard.com/badge/github.com/mymmrac/chipper" alt="Go Report">
-    </a>
-</p>
-
 # 👾 Chipper
+
+[![Chipper CI](https://github.com/mymmrac/chipper/actions/workflows/ci.yaml/badge.svg)](https://github.com/mymmrac/chipper/actions/workflows/ci.yaml)
+[![Go Report](https://goreportcard.com/badge/github.com/mymmrac/chipper)](https://goreportcard.com/report/github.com/mymmrac/chipper)
 
 Chipper is a small tool for testing CPUs.
 
