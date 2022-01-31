@@ -105,7 +105,7 @@ func (b bubbleTeaExecutor) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			progress: -1,
 			duration: -1,
 
-			progressBar: progress.New(progress.WithDefaultGradient()),
+			progressBar: progress.New(progress.WithGradient("#17B978", "#A7FF83")),
 			spinner:     spinner.New(),
 		}
 		tc.spinner.Spinner = spinner.MiniDot
@@ -158,21 +158,22 @@ func (b bubbleTeaExecutor) View() string {
 	}
 
 	for i, tc := range b.testsContext {
-		data.WriteString(fmt.Sprintf("[%d/%d] %s\n", i+1, b.testCount, tc.name))
+		data.WriteString(fmt.Sprintf("    [%d/%d] %s ", i+1, b.testCount, tc.name))
+		if tc.duration > 0 {
+			data.WriteString(fmt.Sprintf("finished in %s\n", tc.duration))
+		} else {
+			data.WriteString("running...\n")
+		}
 
 		if tc.progress >= 0 {
 			tc.progressBar.Width = b.w - 4
 			if tc.progress == 1 {
-				data.WriteString(" ✓ ")
+				data.WriteString(" ● ")
 			} else {
 				data.WriteString(fmt.Sprintf(" %s ", tc.spinner.View()))
 			}
 
-			data.WriteString(tc.progressBar.View() + "\n")
-		}
-
-		if tc.duration > 0 {
-			data.WriteString(fmt.Sprintf("Finished in %s\n\n", tc.duration))
+			data.WriteString(tc.progressBar.View() + "\n\n")
 		}
 	}
 
