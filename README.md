@@ -11,17 +11,22 @@
     </a>
 </p>
 
-# Chipper
+# 👾 Chipper
 
 Chipper is a small tool for testing CPUs.
 
-## Current tests
+It runs multiple tests and measures execution time. Based on that time you can relatively compare CPUs.
+
+> Note: Keep in mind that results may very from run to run, and results doesn't show real picture of witch CPU is 
+> better. Speed of terminal, RAM, or even already running processes may dramatically affect results.
+
+## 📋 Available tests
 
 - Fibonacci sequence (`1, 1, 2, 3, 5`)
 - Factorial (`1, 2, 6, 24, 120`)
 - Trigonometry (`atan(tan(atan(... + e)))`)
 
-## Install & Run
+## ⚡️ Install & Run
 
 Install using `go install`
 
@@ -35,9 +40,15 @@ Run
 chipper
 ```
 
+or run in `simple-mode` without pretty TUI (maybe slightly faster)
+
+```shell
+chipper -s
+```
+
 > Note: Make sure to add `$GOPATH/bin` to `$PATH`
 
-## Build & Run
+## 💾 Build & Run
 
 Build binary
 
