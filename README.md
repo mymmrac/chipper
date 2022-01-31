@@ -17,6 +17,10 @@ Chipper is a small tool for testing CPUs.
 
 It runs multiple tests and measures execution time. Based on that time, you can relatively compare CPUs.
 
+<p align="center">
+  <img src="docs/chipper-screenshot.png" alt="Chipper screenshot">
+</p>
+
 > Note: Keep in mind that results may vary from run to run, and results don't show the real picture of which CPU is
 > better. Speed of terminal, RAM, or even already running processes may dramatically affect results.
 
@@ -34,6 +38,8 @@ Install using `go install`
 go install github.com/mymmrac/chipper@latest
 ```
 
+> Note: Make sure to add `$GOPATH/bin` to `$PATH`
+
 Run
 
 ```shell
@@ -44,20 +50,4 @@ Or run in `simple-mode` without pretty TUI (maybe slightly faster)
 
 ```shell
 chipper -s
-```
-
-> Note: Make sure to add `$GOPATH/bin` to `$PATH`
-
-## 💾 Build & Run
-
-Build binary
-
-```shell
-go build -o bin/chipper github.com/mymmrac/chipper
-```
-
-Run
-
-```shell
-./bin/chipper
 ```
