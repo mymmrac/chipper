@@ -17,7 +17,7 @@ Chipper is a small tool for testing CPUs.
 
 It runs multiple tests and measures execution time. Based on that time, you can relatively compare CPUs.
 
-> Note:Keep in mind that results may vary from run to run, and results don't show the real picture of which CPU is
+> Note: Keep in mind that results may vary from run to run, and results don't show the real picture of which CPU is
 > better. Speed of terminal, RAM, or even already running processes may dramatically affect results.
 
 ## 📋 Available tests
