@@ -6,6 +6,9 @@
     <a href="https://github.com/mymmrac/chipper/actions/workflows/ci.yaml">
         <img src="https://github.com/mymmrac/chipper/actions/workflows/ci.yaml/badge.svg" alt="Chipper CI">
     </a>
+    <a href="https://goreportcard.com/report/github.com/mymmrac/chipper">
+        <img src="https://goreportcard.com/badge/github.com/mymmrac/chipper" alt="Go Report">
+    </a>
 </p>
 
 # Chipper
